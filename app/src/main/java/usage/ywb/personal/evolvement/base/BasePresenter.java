@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import java.lang.ref.WeakReference;
 
 /**
- * @author Kingdee.ywb
- * @version [ V.2.4.7  2019/3/15 ]
+ * @author yuwenbo
+ * @version [ V.1.0.0  2019/3/15 ]
  */
 public class BasePresenter<V extends IBaseView> implements IBasePresenter {
 

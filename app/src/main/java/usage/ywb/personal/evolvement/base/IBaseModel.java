@@ -1,8 +1,8 @@
 package usage.ywb.personal.evolvement.base;
 
 /**
- * @author Kingdee.ywb
- * @version [ V.2.4.7  2019/3/15 ]
+ * @author yuwenbo
+ * @version [ V.1.0.0  2019/3/15 ]
  */
 public interface IBaseModel {
 

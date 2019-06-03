@@ -9,8 +9,8 @@ import usage.ywb.personal.evolvement.modules.Contract;
 import usage.ywb.personal.evolvement.modules.User;
 
 /**
- * @author Kingdee.ywb
- * @version [ V.2.4.9  2019/4/28 ]
+ * @author yuwenbo
+ * @version [ V.1.0.0  2019/4/28 ]
  */
 public class CompanyModel implements Contract.CompanyModel, IHttpError {
 

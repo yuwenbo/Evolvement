@@ -14,8 +14,8 @@ import usage.ywb.personal.evolvement.widgets.LoadingDialog;
  * 通过{@link IBasePresenter}，来实现View层对Presenter的依赖，同时做了内存泄漏的预防处理。
  * Activity通过{@link #getPresenter()}来调用Presenter。
  *
- * @author Kingdee.ywb
- * @version [ V.2.4.7  2019/3/14 ]
+ * @author yuwenbo
+ * @version [ V.1.0.0  2019/3/14 ]
  */
 public abstract class BaseActivity<P extends IBasePresenter> extends AppCompatActivity implements IBaseView {
 

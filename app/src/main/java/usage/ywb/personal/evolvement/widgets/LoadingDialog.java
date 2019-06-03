@@ -9,8 +9,8 @@ import android.widget.TextView;
 import usage.ywb.personal.evolvement.R;
 
 /**
- * @author Kingdee.ywb
- * @version [ V.2.4.7  2019/3/14 ]
+ * @author yuwenbo
+ * @version [ V.1.0.0  2019/3/14 ]
  */
 public class LoadingDialog extends Dialog {
 

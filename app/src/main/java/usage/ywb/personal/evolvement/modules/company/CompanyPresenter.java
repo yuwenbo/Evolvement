@@ -11,8 +11,8 @@ import usage.ywb.personal.evolvement.modules.User;
 import usage.ywb.personal.evolvement.modules.login.LoginModel;
 
 /**
- * @author Kingdee.ywb
- * @version [ V.2.4.7  2019/3/15 ]
+ * @author yuwenbo
+ * @version [ V.1.0.0  2019/3/15 ]
  */
 public class CompanyPresenter extends BasePresenter<Contract.LoginView> implements Contract.CompanyPresenter {
 
