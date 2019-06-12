@@ -1,10 +1,15 @@
-package usage.ywb.personal.evolvement.base;
+package usage.ywb.personal.evolvement.base.presenter;
 
 import android.support.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
+import usage.ywb.personal.evolvement.base.ui.IBaseView;
+
 /**
+ * 通过{@link IBasePresenter}，来实现View层对Presenter的依赖，同时做了内存泄漏的预防处理。
+ * Presenter{@link #getView()}来获取View层对象
+ *
  * @author yuwenbo
  * @version [ V.1.0.0  2019/3/15 ]
  */

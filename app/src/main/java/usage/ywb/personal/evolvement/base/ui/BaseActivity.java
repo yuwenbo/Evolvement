@@ -1,4 +1,4 @@
-package usage.ywb.personal.evolvement.base;
+package usage.ywb.personal.evolvement.base.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import usage.ywb.personal.evolvement.base.presenter.IBasePresenter;
 import usage.ywb.personal.evolvement.widgets.LoadingDialog;
 
 /**
@@ -24,6 +25,7 @@ public abstract class BaseActivity<P extends IBasePresenter> extends AppCompatAc
     private P presenter;
 
     private LoadingDialog loadingDialog;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

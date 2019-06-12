@@ -1,4 +1,4 @@
-package usage.ywb.personal.evolvement.base;
+package usage.ywb.personal.evolvement.base.model;
 
 /**
  * @author yuwenbo

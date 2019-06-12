@@ -1,16 +1,17 @@
-package usage.ywb.personal.evolvement.modules;
+package usage.ywb.personal.evolvement.modules.login;
 
 
-import usage.ywb.personal.evolvement.base.IBaseModel;
-import usage.ywb.personal.evolvement.base.IBasePresenter;
-import usage.ywb.personal.evolvement.base.IBaseView;
-import usage.ywb.personal.evolvement.base.IResponseListener;
+import usage.ywb.personal.evolvement.base.model.IBaseModel;
+import usage.ywb.personal.evolvement.base.presenter.IBasePresenter;
+import usage.ywb.personal.evolvement.base.ui.IBaseView;
+import usage.ywb.personal.evolvement.base.nets.IResponseListener;
+import usage.ywb.personal.evolvement.entity.User;
 
 /**
  * @author yuwenbo
  * @version [ V.1.0.0  2019/3/15 ]
  */
-public class Contract {
+public class LoginContract {
 
     public interface LoginView extends IBaseView {
 
@@ -28,16 +29,8 @@ public class Contract {
         void register(User user);
     }
 
-    public interface CompanyPresenter extends IBasePresenter {
-        void getCompany(User user);
-    }
-
     public interface LoginModel extends IBaseModel {
         void login(User user, IResponseListener<LoginPresenter, User> listener);
-    }
-
-    public interface CompanyModel extends IBaseModel {
-        void getCompany(User user, IResponseListener<CompanyPresenter, Company> listener);
     }
 
     public interface RegisterModel extends IBaseModel {
