@@ -1,7 +1,5 @@
 package usage.ywb.personal.evolvement.base.ui;
 
-import usage.ywb.personal.evolvement.base.presenter.IDelegate;
-
 /**
  * @author yuwenbo
  * @version [ V.1.0.0  2019/3/15 ]
@@ -9,12 +7,12 @@ import usage.ywb.personal.evolvement.base.presenter.IDelegate;
 public interface IBaseView extends IDelegate {
 
     /**
-     * 用以显示正在加载中的
+     * 显示正在加载中
      */
-    void showLoading();
+    void showLoading(String msg);
 
     /**
-     * 隐藏正在加载中的框
+     * 隐藏正在加载中
      */
     void hideLoading();
 

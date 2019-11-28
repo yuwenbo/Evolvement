@@ -1,6 +1,8 @@
 package usage.ywb.personal.evolvement.base.presenter;
 
 /**
+ * 所有Presenter的基类接口
+ *
  * @author yuwenbo
  * @version [ V.1.0.0  2019/3/15 ]
  */
