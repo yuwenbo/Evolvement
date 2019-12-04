@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import usage.ywb.personal.evolvement.R;
+import usage.ywb.personal.evolvement.base.presenter.InjectPresenter;
 import usage.ywb.personal.evolvement.base.ui.BaseActivity;
 import usage.ywb.personal.evolvement.entity.User;
 import usage.ywb.personal.evolvement.modules.login.LoginContract;
@@ -15,14 +16,17 @@ import usage.ywb.personal.evolvement.modules.login.presenter.LoginPresenter;
  */
 public class LoginActivity extends BaseActivity implements LoginContract.LoginView<User> {
 
+//    @InjectPresenter
+    protected LoginPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        presenter = getPresenter(LoginPresenter.class);
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginContract.LoginPresenter presenter = getPresenter(LoginPresenter.class);
                 presenter.login(null);
             }
         });

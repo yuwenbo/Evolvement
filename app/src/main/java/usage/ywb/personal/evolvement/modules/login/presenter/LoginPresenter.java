@@ -13,19 +13,12 @@ import usage.ywb.personal.evolvement.modules.login.model.LoginModel;
  * @author yuwenbo
  * @version [ V.1.0.0  2019/3/15 ]
  */
-public class LoginPresenter extends BasePresenter<LoginContract.LoginView<User>> implements LoginContract.LoginPresenter {
-
-    private LoginContract.LoginModel<LoginPresenter> loginModel;
-
-    public LoginPresenter(@NonNull LoginContract.LoginView<User> view) {
-        super(view);
-        loginModel = new LoginModel();
-    }
+public class LoginPresenter extends BasePresenter<LoginContract.LoginView<User>, LoginModel> implements LoginContract.LoginPresenter {
 
     @Override
     public void login(User user) {
         getView().showLoading("正在登录中...");
-        loginModel.login(user, this);
+        getModel().login(user, this);
     }
 
     public void onLoginSucceed(User user) {

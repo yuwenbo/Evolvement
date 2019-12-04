@@ -1,8 +1,6 @@
 package usage.ywb.personal.evolvement.modules.login;
 
 
-import usage.ywb.personal.evolvement.base.model.IBaseModel;
-import usage.ywb.personal.evolvement.base.presenter.IBasePresenter;
 import usage.ywb.personal.evolvement.base.ui.IBaseView;
 import usage.ywb.personal.evolvement.entity.User;
 
@@ -38,7 +36,7 @@ public class LoginContract {
     /**
      * 登录Presenter层接口
      */
-    public interface LoginPresenter extends IBasePresenter {
+    public interface LoginPresenter {
         /**
          * Presenter登录接口，UI与Model的桥梁
          *
@@ -52,7 +50,7 @@ public class LoginContract {
      *
      * @param <P>
      */
-    public interface LoginModel<P extends LoginContract.LoginPresenter> extends IBaseModel {
+    public interface LoginModel<P extends LoginContract.LoginPresenter> {
         /**
          * 登录，Model与NET直接访问的接口
          *
