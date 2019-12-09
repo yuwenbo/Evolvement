@@ -2,7 +2,19 @@ package usage.ywb.personal.evolvement.modules.login.model;
 
 import android.os.SystemClock;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.internal.bind.TypeAdapters;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import java.io.IOException;
+
 import usage.ywb.personal.evolvement.base.model.BaseModel;
+import usage.ywb.personal.evolvement.base.utils.ReflectMethodAdapterFactory;
 import usage.ywb.personal.evolvement.entity.User;
 import usage.ywb.personal.evolvement.modules.login.LoginContract;
 import usage.ywb.personal.evolvement.modules.login.presenter.LoginPresenter;
@@ -23,6 +35,28 @@ public class LoginModel extends BaseModel implements LoginContract.LoginModel<Lo
             public void run() {
                 //TODO
                 SystemClock.sleep(1500);
+                JsonObject json = new JsonObject();
+                json.addProperty("USERNAME", "张三");
+                json.addProperty("ALIAS", "小33");
+                json.addProperty("AGE", 27);
+
+                JsonObject company = new JsonObject();
+                company.addProperty("ID", 134781199L);
+                company.addProperty("NAME", "金小蝶");
+
+                JsonArray array = new JsonArray();
+                array.add(company);
+
+                json.add("COMPANY", array);
+
+                GsonBuilder builder = new GsonBuilder();
+                builder.registerTypeAdapterFactory(new ReflectMethodAdapterFactory());
+                Gson gson = builder.create();
+
+//                Gson gson = new Gson();
+
+                User user = gson.fromJson(json, User.class);
+
                 presenter.onLoginSucceed(user);
             }
         }).start();
