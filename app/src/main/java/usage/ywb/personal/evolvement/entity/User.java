@@ -15,7 +15,8 @@ public class User extends Entity {
 
     private String alias;
 
-    private List<Company> company;
+    @SerializedName("COMPANY")
+    public List<Company> company;
 
     @SerializedName("COMPANY")
     public void setCompany(List<Company> company) {
@@ -28,8 +29,4 @@ public class User extends Entity {
         this.alias = alias;
     }
 
-    @SerializedName("ALIAS")
-    public String getAlias() {
-        return "三哥";
-    }
 }

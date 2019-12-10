@@ -43,6 +43,7 @@ public class LoginModel extends BaseModel implements LoginContract.LoginModel<Lo
                 JsonObject company = new JsonObject();
                 company.addProperty("ID", 134781199L);
                 company.addProperty("NAME", "金小蝶");
+                company.addProperty("ORG", 8888);
 
                 JsonArray array = new JsonArray();
                 array.add(company);
@@ -52,8 +53,6 @@ public class LoginModel extends BaseModel implements LoginContract.LoginModel<Lo
                 GsonBuilder builder = new GsonBuilder();
                 builder.registerTypeAdapterFactory(new ReflectMethodAdapterFactory());
                 Gson gson = builder.create();
-
-//                Gson gson = new Gson();
 
                 User user = gson.fromJson(json, User.class);
 

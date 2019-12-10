@@ -16,4 +16,11 @@ public class Company extends Entity {
     @SerializedName("NAME")
     public String name;
 
+
+    @SerializedName("ORG")
+    public void setOrg(int org){
+
+    }
+
+
 }

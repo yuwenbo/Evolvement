@@ -8,6 +8,7 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.$Gson$Types;
 import com.google.gson.internal.ConstructorConstructor;
+import com.google.gson.internal.Excluder;
 import com.google.gson.internal.ObjectConstructor;
 import com.google.gson.internal.Primitives;
 import com.google.gson.internal.reflect.ReflectionAccessor;
@@ -17,6 +18,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -28,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import usage.ywb.personal.evolvement.entity.User;
+
 /**
  * @author Kingdee.ywb
  * @version [ V.2.7.1  2019/12/6 ]
@@ -36,8 +40,10 @@ public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
 
     private final ConstructorConstructor constructorConstructor;
     private final ReflectionAccessor accessor = ReflectionAccessor.getInstance();
+    private final Excluder excluder;
 
     public ReflectMethodAdapterFactory() {
+        this.excluder = Excluder.DEFAULT;
         this.constructorConstructor = new ConstructorConstructor(Collections.<Type, InstanceCreator<?>>emptyMap());
     }
 
@@ -52,7 +58,49 @@ public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
             return null;
         }
         ObjectConstructor<T> constructor = constructorConstructor.get(type);
-        return new Adapter<>(constructor, map);
+        return new Adapter<>(constructor, getBoundFields(gson, type, raw), map);
+    }
+
+    private boolean excludeField(Field f, boolean serialize) {
+        return !excluder.excludeClass(f.getType(), serialize) && !excluder.excludeField(f, serialize);
+    }
+
+    private Map<String, BoundField> getBoundFields(Gson context, TypeToken<?> type, Class<?> raw) {
+        Map<String, BoundField> result = new LinkedHashMap<>();
+        if (raw.isInterface()) {
+            return result;
+        }
+        Type declaredType = type.getType();
+        while (raw != Object.class) {
+            Field[] fields = raw.getDeclaredFields();
+            for (Field field : fields) {
+                boolean serialize = excludeField(field, true);
+                boolean deserialize = excludeField(field, false);
+                if (!serialize && !deserialize) {
+                    continue;
+                }
+                accessor.makeAccessible(field);
+                Type fieldType = $Gson$Types.resolve(type.getType(), raw, field.getGenericType());
+                List<String> fieldNames = getFieldNames(field);
+                if (fieldNames == null) continue;
+                BoundField previous = null;
+                for (int i = 0, size = fieldNames.size(); i < size; ++i) {
+                    String name = fieldNames.get(i);
+                    if (i != 0) serialize = false; // only serialize the default name
+                    BoundField boundField = createBoundField(context, field, name,
+                            TypeToken.get(fieldType), serialize, deserialize);
+                    BoundField replaced = result.put(name, boundField);
+                    if (previous == null) previous = replaced;
+                }
+                if (previous != null) {
+                    throw new IllegalArgumentException(declaredType
+                            + " declares multiple JSON fields named " + previous.name);
+                }
+            }
+            type = TypeToken.get(Objects.requireNonNull($Gson$Types.resolve(type.getType(), raw, raw.getGenericSuperclass())));
+            raw = type.getRawType();
+        }
+        return result;
     }
 
     private Map<String, BoundMethod> getBoundMethods(Gson context, TypeToken<?> type, Class<?> raw) {
@@ -87,6 +135,22 @@ public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
             raw = type.getRawType();
         }
         return result;
+    }
+
+    private List<String> getFieldNames(Field field) {
+        SerializedName annotation = field.getAnnotation(SerializedName.class);
+        if (annotation != null) {
+            String serializedName = annotation.value();
+            String[] alternates = annotation.alternate();
+            if (alternates.length == 0) {
+                return Collections.singletonList(serializedName);
+            }
+            List<String> fieldNames = new ArrayList<String>(alternates.length + 1);
+            fieldNames.add(serializedName);
+            fieldNames.addAll(Arrays.asList(alternates));
+            return fieldNames;
+        }
+        return null;
     }
 
     private List<String> getMethodNames(Method method) {
@@ -128,6 +192,22 @@ public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
         };
     }
 
+    private BoundField createBoundField(final Gson context, final Field field, final String name, final TypeToken<?> fieldType,
+                                        boolean serialize, boolean deserialize) {
+        final boolean isPrimitive = Primitives.isPrimitive(fieldType.getRawType());
+        // special casing primitives here saves ~5% on Android...
+        final TypeAdapter<?> typeAdapter = context.getAdapter(fieldType);
+        return new BoundField(name, serialize, deserialize) {
+            @Override
+            void read(JsonReader reader, Object value)
+                    throws IOException, IllegalAccessException {
+                Object fieldValue = typeAdapter.read(reader);
+                if (fieldValue != null || !isPrimitive) {
+                    field.set(value, fieldValue);
+                }
+            }
+        };
+    }
 
     abstract class BoundMethod {
         final String name;
@@ -139,13 +219,29 @@ public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
         abstract void read(JsonReader reader, Object value) throws IOException, IllegalAccessException;
     }
 
-    public static final class Adapter<T> extends TypeAdapter<T> {
-        private final ObjectConstructor<T> constructor;
-        private final Map<String, BoundMethod> boundFields;
+    abstract class BoundField {
+        final String name;
+        final boolean serialized;
+        final boolean deserialized;
 
-        Adapter(ObjectConstructor<T> constructor, Map<String, BoundMethod> boundFields) {
+        BoundField(String name, boolean serialized, boolean deserialized) {
+            this.name = name;
+            this.serialized = serialized;
+            this.deserialized = deserialized;
+        }
+
+        abstract void read(JsonReader reader, Object value) throws IOException, IllegalAccessException;
+    }
+
+    public final class Adapter<T> extends TypeAdapter<T> {
+        private final ObjectConstructor<T> constructor;
+        private final Map<String, BoundField> boundFields;
+        private final Map<String, BoundMethod> boundMethods;
+
+        Adapter(ObjectConstructor<T> constructor, Map<String, BoundField> boundFields, Map<String, BoundMethod> boundMethods) {
             this.constructor = constructor;
             this.boundFields = boundFields;
+            this.boundMethods = boundMethods;
         }
 
         @Override
@@ -155,27 +251,28 @@ public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
                 return null;
             }
 
-            //TODO
-            /**
-             * {@link com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.Adapter#read(JsonReader)}中也有
-             * <code>
-             *     T instance = constructor.construct();
-             * </code>
-             * 此处如果也创建，那么对于Method和Field的解析，不再是同一个对象，还没想到解决方案
-             */
             T instance = constructor.construct();
 
             try {
                 in.beginObject();
                 while (in.hasNext()) {
+                    boolean flag = false;
                     String name = in.nextName();
-                    BoundMethod method = boundFields.get(name);
-                    if (method == null) {
-                        in.skipValue();
-                    } else {
+                    BoundField field = boundFields.get(name);
+                    if (field != null) {
+                        flag = true;
+                        field.read(in, instance);
+                    }
+                    BoundMethod method = boundMethods.get(name);
+                    if (method != null && !flag) {
+                        flag = true;
                         method.read(in, instance);
                     }
+                    if (!flag) {
+                        in.skipValue();
+                    }
                 }
+
             } catch (IllegalStateException e) {
                 throw new JsonSyntaxException(e);
             } catch (IllegalAccessException e) {
