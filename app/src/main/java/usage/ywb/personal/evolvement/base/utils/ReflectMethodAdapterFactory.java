@@ -30,10 +30,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import usage.ywb.personal.evolvement.entity.User;
 
 /**
- * @author Kingdee.ywb
+ * 注解{@link SerializedName}在声明中有
+ * <code>
+ * # @Target({ElementType.FIELD, ElementType.METHOD})
+ * </code>
+ * 表明{@link SerializedName}可以注解在方法上，但事实上，在Gson的处理工厂类
+ * {@link com.google.gson.internal.bind.ReflectiveTypeAdapterFactory}中只有对包含注解的FIELD进行JSON序列化。
+ * <p>
+ * 实现一个类似于ReflectiveTypeAdapterFactory的工厂类，当SerializedName注解在方法上，在类序列化时，
+ * 包含注解的方法会被调用，序列化字段（对象）以参数的形式传入方法。
+ * 这里只实现了反序列化过程:
+ * <code>
+ * void setX(Object)，
+ * </code>
+ * 不包含序列化:
+ * <code>
+ * Object getX()。
+ * </code>
+ *
+ * @author yuwenbo
  * @version [ V.2.7.1  2019/12/6 ]
  */
 public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
@@ -55,6 +72,10 @@ public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
         }
         Map<String, BoundMethod> map = getBoundMethods(gson, type, raw);
         if (map.size() == 0) {
+            /**
+             * 自定义工厂优先级最于GSON中预置工厂，其中包含对基础类型、字符串、集合等进行序列化和反序列化的实现。
+             * 当对象中没有方法包含注解时，仍使用GSON预置Adapter，这里返回null。
+             */
             return null;
         }
         ObjectConstructor<T> constructor = constructorConstructor.get(type);
@@ -264,6 +285,7 @@ public class ReflectMethodAdapterFactory implements TypeAdapterFactory {
                         field.read(in, instance);
                     }
                     BoundMethod method = boundMethods.get(name);
+                    //当字段和方法拥有相同注解时，字段注解的优先级高于方法注解
                     if (method != null && !flag) {
                         flag = true;
                         method.read(in, instance);

@@ -15,13 +15,11 @@ public class User extends Entity {
 
     private String alias;
 
-    @SerializedName("COMPANY")
-    public List<Company> company;
+    private List<Company> company;
 
     @SerializedName("COMPANY")
     public void setCompany(List<Company> company) {
         this.company = company;
-
     }
 
     @SerializedName("ALIAS")

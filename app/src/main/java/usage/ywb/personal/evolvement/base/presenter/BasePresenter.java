@@ -1,7 +1,5 @@
 package usage.ywb.personal.evolvement.base.presenter;
 
-import android.support.annotation.NonNull;
-
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

@@ -3,7 +3,7 @@ package usage.ywb.personal.evolvement.base.ui;
 import android.support.v4.app.Fragment;
 
 /**
- * @author Kingdee.ywb
+ * @author yuwenbo
  * @version [ V.2.7.1  2019/12/2 ]
  */
 public abstract class BaseFragment extends Fragment implements IBaseView {

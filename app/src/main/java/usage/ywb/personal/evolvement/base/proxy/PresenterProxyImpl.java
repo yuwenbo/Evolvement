@@ -12,7 +12,7 @@ import usage.ywb.personal.evolvement.base.presenter.InjectPresenter;
 import usage.ywb.personal.evolvement.base.ui.IBaseView;
 
 /**
- * @author Kingdee.ywb
+ * @author yuwenbo
  * @version [ V.2.7.1  2019/12/2 ]
  */
 public class PresenterProxyImpl implements IPresenterProxy {

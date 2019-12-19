@@ -1,7 +1,5 @@
 package usage.ywb.personal.evolvement.modules.login.presenter;
 
-import android.support.annotation.NonNull;
-
 import usage.ywb.personal.evolvement.base.presenter.BasePresenter;
 import usage.ywb.personal.evolvement.modules.login.LoginContract;
 import usage.ywb.personal.evolvement.entity.User;
